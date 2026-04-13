@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Accept Donation</h1>
+
+<div class="container">
+    <h2>Donation Details</h2>
+    <p><strong>Food:</strong> {{ donation.food_name }}</p>
+    <p><strong>Quantity:</strong> {{ donation.quantity }}</p>
+    <p><strong>Location:</strong> {{ donation.location }}</p>
+    <p><strong>Phone:</strong> {{ donation.phone }}</p>
+
+    <button onclick="showDeliveryDialog()">Accept Donation</button>
+</div>
+
+<!-- Delivery Options Modal -->
+<div id="deliveryModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Choose Delivery Method</h2>
+        <button onclick="chooseOwnDelivery({{ donation.id }})">Own Delivery</button>
+        <button onclick="showDeliveryPartners({{ donation.id }})">Delivery Partner</button>
+    </div>
+</div>
+
+<!-- Delivery Partners Modal -->
+<div id="partnersModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closePartnersModal()">&times;</span>
+        <h2>Select Delivery Partner</h2>
+        <div id="partnersList">
+            <!-- Partners will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<!-- Maps removed -->
+
+<script>
+function showDeliveryDialog() {
+    document.getElementById('deliveryModal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('deliveryModal').style.display = 'none';
+}
+
+function chooseOwnDelivery(donationId) {
+    // Update donation status and redirect
+    fetch('/confirm_accept/' + donationId + '/own', { method: 'POST' })
+        .then(() => window.location.href = '/ngo_dashboard');
+}
+
+function showDeliveryPartners(donationId) {
+    closeModal();
+    document.getElementById('partnersModal').style.display = 'block';
+
+    // Load delivery partners
+    fetch('/get_delivery_partners')
+        .then(response => response.json())
+        .then(partners => {
+            const list = document.getElementById('partnersList');
+            list.innerHTML = partners.map(p =>
+                `<div class="partner-card">
+                    <h3>${p.name}</h3>
+                    <p>Phone: ${p.phone}</p>
+                    <p>Vehicle: ${p.vehicle_type} - ${p.vehicle_number}</p>
+                    <p>Company: ${p.company}</p>
+                    <button onclick="selectPartner(${donationId}, ${p.id})">Select</button>
+                </div>`
+            ).join('');
+        });
+}
+
+function closePartnersModal() {
+    document.getElementById('partnersModal').style.display = 'none';
+}
+
+function selectPartner(donationId, partnerId) {
+    fetch('/confirm_accept/' + donationId + '/partner/' + partnerId, { method: 'POST' })
+        .then(() => window.location.href = '/ngo_dashboard');
+}
+
+// Maps functionality removed
+
+</script>
+
+<style>
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 10px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: black;
+}
+
+.partner-card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+</style>
+
+{% endblock %}

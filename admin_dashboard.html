@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+.leaderboard-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.leaderboard-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.leaderboard-title {
+    font-size: 48px;
+    font-weight: bold;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #ffa07a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.stat-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.stat-card.donations {
+    background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+    border-color: #fdcb6e;
+}
+
+.stat-card.ngos {
+    background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+    border-color: #a29bfe;
+}
+
+.stat-card.donors {
+    background: linear-gradient(135deg, #fd79a8, #e84393);
+    border-color: #fd79a8;
+}
+
+.stat-number {
+    font-size: 72px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    margin-bottom: 10px;
+    display: block;
+}
+
+.stat-label {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.lists-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.list-container {
+    background: rgba(255,255,255,0.9);
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.list-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.list-item {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-left: 4px solid #007bff;
+    transition: transform 0.2s ease;
+}
+
+.list-item:hover {
+    transform: translateX(5px);
+}
+
+.list-item h4 {
+    margin: 0 0 5px 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.list-item p {
+    margin: 2px 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.delete-btn {
+    background: linear-gradient(45deg, #ff4757, #ff3838);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-top: 10px;
+    transition: transform 0.2s ease;
+}
+
+.delete-btn:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .leaderboard-title {
+        font-size: 36px;
+    }
+    
+    .stat-number {
+        font-size: 48px;
+    }
+    
+    .lists-section {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="leaderboard-container">
+    <div class="leaderboard-header">
+        <h1 class="leaderboard-title">🏆 ADMIN LEADERBOARD 🏆</h1>
+        <p style="font-size: 18px; color: #666;">Track your platform's growth and impact</p>
+    </div>
+
+    <!-- STATS CARDS -->
+    <div class="stats-grid">
+        <div class="stat-card donations">
+            <span class="stat-number">{{donations}}</span>
+            <div class="stat-label">Total Donations</div>
+        </div>
+        
+        <div class="stat-card ngos">
+            <span class="stat-number">{{ngos}}</span>
+            <div class="stat-label">NGOs Registered</div>
+        </div>
+        
+        <div class="stat-card donors">
+            <span class="stat-number">{{donors}}</span>
+            <div class="stat-label">Active Donors</div>
+        </div>
+    </div>
+
+    <!-- LISTS SECTION -->
+    <div class="lists-section">
+        <!-- DONORS LIST -->
+        <div class="list-container">
+            <h2 class="list-title">👥 Registered Donors</h2>
+            {% for d in all_donors %}
+            <div class="list-item">
+                <h4>{{d.name}}</h4>
+                <p>📧 {{d.email}}</p>
+                <p>📱 {{d.phone}}</p>
+                <p>🏠 {{d.address}}</p>
+                <a href="/delete_donor/{{d.id}}">
+                    <button class="delete-btn">Delete Donor</button>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- NGO LIST -->
+        <div class="list-container">
+            <h2 class="list-title">🏢 Registered NGOs</h2>
+            {% for n in all_ngos %}
+            <div class="list-item">
+                <h4>{{n.name}}</h4>
+                <p>👤 Owner: {{n.owner}}</p>
+                <p>📧 {{n.email}}</p>
+                <p>📱 {{n.phone}}</p>
+                <p>🏠 {{n.address}}</p>
+                <p>🏷️ Type: {{n.type}}</p>
+                <a href="/delete_ngo/{{n.id}}">
+                    <button class="delete-btn">Delete NGO</button>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %} 

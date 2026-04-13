@@ -1,0 +1,80 @@
+<style>
+body {
+    font-family: Arial;
+    background: linear-gradient(135deg, #fce4ec, #e3f2fd, #e8f5e9, #fff3e0);
+    text-align: center;
+    animation: fadeIn 1s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.container {
+    width: 400px;
+    margin: auto;
+    margin-top: 50px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+input, select {
+    width: 90%;
+    padding: 12px;
+    margin: 10px;
+    font-size: 16px;
+    border: 2px solid #ffb3ba;
+    border-radius: 10px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus, select:focus {
+    border-color: #bae1ff;
+    box-shadow: 0 0 10px rgba(186, 225, 255, 0.5);
+    outline: none;
+}
+
+button {
+    padding: 12px 20px;
+    font-size: 18px;
+    background: linear-gradient(45deg, #ffb3ba, #bae1ff);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 179, 186, 0.5);
+}
+</style>
+    border-radius: 5px;
+}
+</style>
+
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Admin Console</h1>
+
+<div class="stats">
+    <div>Total Donors: {{ donors }}</div>
+    <div>Total NGOs: {{ ngos }}</div>
+    <div>Total Donations: {{ donations }}</div>
+    <div>Raised Donations: {{ raised }}</div>
+    <div>Pending Donations: {{ pending }}</div>
+</div>
+
+{% endblock %} 

@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    #fullMap {
+        width: 100%;
+        height: calc(100vh - 80px);
+        margin: 0;
+        padding: 0;
+        border-radius: 0;
+    }
+    
+    .map-info-panel {
+        position: absolute;
+        top: 100px;
+        right: 20px;
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        z-index: 500;
+        max-width: 300px;
+        font-size: 12px;
+    }
+    
+    .map-info-panel h3 {
+        margin: 0 0 15px 0;
+        font-size: 16px;
+        color: #333;
+        font-weight: bold;
+    }
+    
+    .legend-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+    }
+    
+    .legend-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+    
+    .donor-icon { background: #4ECDC4; }
+    .ngo-icon { background: #FF6B6B; }
+    .donation-avail-icon { background: #FFD93D; }
+    .donation-done-icon { background: #6BCF7F; }
+    
+    .map-title {
+        position: absolute;
+        top: 100px;
+        left: 20px;
+        background: white;
+        padding: 12px 18px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        z-index: 500;
+        font-size: 22px;
+        font-weight: bold;
+        background: linear-gradient(45deg, #4ECDC4, #FF6B6B, #45B7D1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+</style>
+
+<div id="fullMap"></div>
+
+<div class="map-title">🗺️ Live Donation Map</div>
+
+<div class="map-info-panel">
+    <h3>Legend</h3>
+    <div class="legend-grid">
+        <div class="legend-item">
+            <div class="legend-icon donor-icon">📦</div>
+            <div>Donors</div>
+        </div>
+        <div class="legend-item">
+            <div class="legend-icon ngo-icon">🏢</div>
+            <div>NGOs</div>
+        </div>
+        <div class="legend-item">
+            <div class="legend-icon donation-avail-icon">📋</div>
+            <div>Available</div>
+        </div>
+        <div class="legend-item">
+            <div class="legend-icon donation-done-icon">✓</div>
+            <div>Donated</div>
+        </div>
+    </div>
+</div>
+
+<script>
+function initFullMap() {
+    if (!document.getElementById('fullMap')) {
+        console.error('Map container not found');
+        return;
+    }
+    
+    const map = L.map('fullMap').setView([20.5937, 78.9629], 5);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+    }).addTo(map);
+    
+    fetch('/api/map_locations')
+        .then(response => response.json())
+        .then(data => {
+            // Add donors
+            data.donors.forEach(donor => {
+                const lat = 20.5937 + (Math.random() - 0.5) * 15;
+                const lng = 78.9629 + (Math.random() - 0.5) * 15;
+                L.circleMarker([lat, lng], {
+                    radius: 12, fillColor: '#4ECDC4', color: 'white', weight: 3, opacity: 1, fillOpacity: 0.8
+                }).bindPopup(`<div style="font-weight: bold; color: #4ECDC4;">📦 Donor</div><strong>${donor.name}</strong><br/>📍 ${donor.address}<br/>📱 ${donor.phone}`).addTo(map);
+            });
+            
+            // Add NGOs
+            data.ngos.forEach(ngo => {
+                const lat = 20.5937 + (Math.random() - 0.5) * 15;
+                const lng = 78.9629 + (Math.random() - 0.5) * 15;
+                L.circleMarker([lat, lng], {
+                    radius: 14, fillColor: '#FF6B6B', color: 'white', weight: 3, opacity: 1, fillOpacity: 0.8
+                }).bindPopup(`<div style="font-weight: bold; color: #FF6B6B;">🏢 NGO</div><strong>${ngo.name}</strong><br/>📍 ${ngo.address}<br/>📱 ${ngo.phone}`).addTo(map);
+            });
+            
+            // Add donations
+            data.donations.forEach(donation => {
+                const lat = 20.5937 + (Math.random() - 0.5) * 12;
+                const lng = 78.9629 + (Math.random() - 0.5) * 12;
+                const color = donation.status === 'Available' ? '#FFD93D' : '#6BCF7F';
+                L.circleMarker([lat, lng], {
+                    radius: 11, fillColor: color, color: 'white', weight: 3, opacity: 1, fillOpacity: 0.8
+                }).bindPopup(`<div style="font-weight: bold; color: ${color};">🍽️ ${donation.food_name}</div>Quantity: ${donation.quantity}<br/>Donor: ${donation.donor_name}<br/>Status: <strong>${donation.status}</strong><br/>📍 ${donation.location}${donation.ngo_name ? '<br/>NGO: ' + donation.ngo_name : ''}`).addTo(map);
+            });
+        })
+        .catch(error => console.error('Error loading map locations:', error));
+}
+
+// Wait for Leaflet to load and DOM to be ready
+if (typeof L !== 'undefined') {
+    initFullMap();
+} else {
+    window.addEventListener('load', function() {
+        setTimeout(initFullMap, 100);
+    });
+}
+</script>
+
+{% endblock %}

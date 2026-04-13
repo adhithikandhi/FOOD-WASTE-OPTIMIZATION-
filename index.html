@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+
+/* 🌈 PASTEL BACKGROUND */
+body {
+    background: linear-gradient(135deg, #fce4ec, #e3f2fd, #e8f5e9);
+}
+
+/* HERO SECTION */
+.hero {
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+}
+
+/* TITLE */
+.hero h1 {
+    font-size:65px;
+    color:#333;
+    margin-top: -50px; /* Move up */
+}
+
+/* SUB BOX BELOW TITLE */
+.highlight {
+    margin-top:10px; /* Reduced gap */
+    background: rgba(255,255,255,0.6);
+    padding:15px 30px;
+    border-radius:15px;
+    font-size:20px;
+}
+
+/* BUTTONS */
+.buttons button {
+    padding:15px 30px;
+    font-size:18px;
+    margin:5px; /* Reduced gap */
+    border-radius:10px;
+    border:none;
+    background:#8bc34a; /* Changed color */
+    color:#333;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.buttons button:hover {
+    background:#689f38; /* Changed hover color */
+    transform:scale(1.05);
+}
+
+/* SCROLL SECTION */
+.section {
+    display:flex;
+    justify-content:space-around;
+    padding:80px;
+}
+
+/* BOX STYLE */
+.box {
+    width:260px;
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 0 15px rgba(0,0,0,0.1);
+}
+.quote {
+    font-size:22px;
+    color:#444;
+    margin-top:5px; /* Reduced gap */
+    font-style:italic;
+    background: rgba(255,255,255,0.6);
+    padding:10px 20px;
+    border-radius:10px;
+}
+body {
+    background: url('/static/bg1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+</style>
+
+<!-- 🔵 HERO -->
+<div class="hero">
+
+    
+    <h1>FOOD WASTE OPTIMIZATION SYSTEM</h1>
+
+<p class="quote">
+“A digital solution today can turn wasted food into tomorrow’s nourishment.”
+</p>
+
+    <!-- ✨ NEW SECTION BELOW TITLE -->
+    <div class="highlight">
+        Reduce Waste • Feed People • Save Lives
+    </div>
+
+    <div class="buttons">
+        <a href="/donor_register"><button>I am Donor</button></a>
+        <a href="/ngo_register"><button>I am NGO</button></a>
+    </div>
+
+</div>
+
+<!-- 🟢 SCROLL DOWN -->
+<div class="section">
+
+    <!-- LEFT -->
+    <div class="box">
+        <h2>Advantages</h2>
+        <p>✔ Reduce Food Waste</p>
+        <p>✔ Help Needy</p>
+        <p>✔ Fast Distribution</p>
+    </div>
+
+    <!-- CENTER -->
+    <div class="box">
+        <h2>Contact</h2>
+        <p>Email: yourmail@gmail.com</p>
+        <p>Phone: 9876543210</p>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="box">
+        <h2>Follow Us</h2>
+
+        <p><a href="#">📷 Instagram</a></p>
+        <p><a href="#">💬 WhatsApp</a></p>
+        <p><a href="#">🐦 Twitter</a></p>
+        <p><a href="#">📘 Facebook</a></p>
+
+    </div>
+
+
+</div>
+
+{% include 'footer.html' %}
+{% endblock %} 
+

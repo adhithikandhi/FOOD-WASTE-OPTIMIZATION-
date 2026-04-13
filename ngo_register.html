@@ -1,0 +1,27 @@
+ {% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+<h2>NGO Register</h2>
+
+<form method="POST" enctype="multipart/form-data">
+<input name="name" placeholder="NGO Name">
+<input name="owner" placeholder="Owner">
+<input name="address" placeholder="Address">
+<input name="phone" placeholder="Phone">
+<input name="email" placeholder="Email">
+
+<select name="type">
+<option>Private</option>
+<option>Government</option>
+</select>
+
+<input type="file" name="file">
+<input name="password" type="password" placeholder="Password">
+
+<button>Register</button>
+</form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Delivery Partners</h1>
+
+<div class="container">
+    <h2>Available Delivery Partners</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; flex-direction: row-reverse;">
+        {% for partner in partners %}
+        <div class="partner-card" style="flex: 1 1 300px; position: relative;">
+            <div style="position: absolute; top: 10px; right: 10px; font-size: 20px;">🚗</div>
+            <h3>{{ partner.name }}</h3>
+            <p><strong>Phone:</strong> {{ partner.phone }}</p>
+            <p><strong>Email:</strong> {{ partner.email }}</p>
+            <p><strong>Vehicle:</strong> {{ partner.vehicle_type }} - {{ partner.vehicle_number }}</p>
+            <p><strong>Company:</strong> {{ partner.company }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.partner-card {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+</style>
+
+{% endblock %}

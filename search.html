@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+<h2>Search</h2>
+
+<form method="POST">
+
+<input name="location" placeholder="Enter Location (e.g. Uppal)">
+
+<select name="food_type">
+<option value="">Select Food Type</option>
+<option value="veg">Veg</option>
+<option value="non">Non-Veg</option>
+<option value="noodles">Noodles</option>
+</select>
+
+<button>Search</button>
+
+</form>
+</div>
+
+<!-- 🏢 NGO RESULTS -->
+<h2 style="text-align:center;">Nearby NGOs</h2>
+
+{% for n in ngos %}
+<div class="container">
+<h3>{{n.name}}</h3>
+<p>{{n.address}}</p>
+<p>{{n.phone}}</p>
+</div>
+{% endfor %}
+
+<!-- 🍱 FOOD RESULTS -->
+<h2 style="text-align:center;">Food Donations</h2>
+
+{% for f in foods %}
+<div class="container"
+style="background: {{ '#ffcccc' if f.status=='Donated' else 'white' }}">
+
+<h3>{{f.food_name}}</h3>
+
+<p><b>Quantity:</b> {{f.quantity}}</p>
+<p><b>Location:</b> {{f.location}}</p>
+
+<p><b>Donor:</b> {{f.name}}</p>
+<p><b>Phone:</b> {{f.phone}}</p>
+
+<p>
+<b>Status:</b> 
+<span style="color:{{ 'green' if f.status=='Available' else 'red' }}">
+{{f.status}}
+</span>
+</p>
+
+<!-- SHOW NGO -->
+{% if f.status == 'Donated' %}
+<p style="color:red;">
+<b>Donated to NGO:</b> {{f.ngo_name}}
+</p>
+{% endif %}
+
+</div>
+{% endfor %}
+
+{% endblock %}  

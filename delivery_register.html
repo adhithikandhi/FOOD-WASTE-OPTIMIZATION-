@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Delivery Partner Registration</h1>
+
+<div class="container">
+    <h2>Register as Delivery Partner</h2>
+    <form method="POST">
+        <input name="name" placeholder="Full Name" required>
+        <input name="phone" placeholder="Phone Number" required>
+        <input name="email" placeholder="Email" type="email" required>
+        <input name="address" placeholder="Address" required>
+        <select name="vehicle_type" required>
+            <option value="">Select Vehicle Type</option>
+            <option value="Bike">Bike</option>
+            <option value="Scooter">Scooter</option>
+            <option value="Car">Car</option>
+            <option value="Van">Van</option>
+        </select>
+        <input name="vehicle_number" placeholder="Vehicle Number" required>
+        <select name="company" required>
+            <option value="">Select Company</option>
+            <option value="Rapido">Rapido</option>
+            <option value="Uber">Uber</option>
+            <option value="Swiggy">Swiggy</option>
+            <option value="Zomato">Zomato</option>
+            <option value="Independent">Independent</option>
+        </select>
+        <input name="password" placeholder="Password" type="password" required>
+        <button type="submit">Register</button>
+    </form>
+</div>
+
+{% endblock %}

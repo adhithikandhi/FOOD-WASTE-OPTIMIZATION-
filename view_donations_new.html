@@ -1,0 +1,301 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    #map {
+        width: 100%;
+        height: 600px;
+        margin: 20px 0;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    
+    .map-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .legend {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-top: 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .legend-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 20px;
+    }
+    
+    .donor-icon {
+        background: #4ECDC4;
+    }
+    
+    .ngo-icon {
+        background: #FF6B6B;
+    }
+    
+    .partner-icon {
+        background: #45B7D1;
+    }
+    
+    .donation-avail-icon {
+        background: #FFD93D;
+    }
+    
+    .donation-done-icon {
+        background: #6BCF7F;
+    }
+    
+    .legend-label {
+        font-size: 14px;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .map-title {
+        text-align: center;
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        background: linear-gradient(45deg, #4ECDC4, #FF6B6B, #45B7D1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .donations-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+    }
+    
+    .donation-item {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-left: 4px solid #FFD93D;
+    }
+    
+    .donation-item.accepted {
+        border-left-color: #6BCF7F;
+        background: #f0fdf4;
+    }
+    
+    .donation-item h4 {
+        margin: 0 0 10px 0;
+        color: #333;
+        font-size: 18px;
+    }
+    
+    .donation-item p {
+        margin: 5px 0;
+        font-size: 13px;
+        color: #666;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+        margin-top: 8px;
+    }
+    
+    .status-available {
+        background: #FFD93D;
+        color: #333;
+    }
+    
+    .status-accepted {
+        background: #6BCF7F;
+        color: white;
+    }
+</style>
+
+<div class="map-container">
+    <div class="map-title">🗺️ Donation Map & Locations</div>
+    <div id="map"></div>
+    
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-icon donor-icon">📦</div>
+            <div class="legend-label">Donors</div>
+        </div>
+        <div class="legend-item">
+            <div class="legend-icon ngo-icon">🏢</div>
+            <div class="legend-label">NGOs</div>
+        </div>
+        <div class="legend-item">
+            <div class="legend-icon partner-icon">🚚</div>
+            <div class="legend-label">Delivery Partners</div>
+        </div>
+        <div class="legend-item">
+            <div class="legend-icon donation-avail-icon">📋</div>
+            <div class="legend-label">Available Donation</div>
+        </div>
+        <div class="legend-item">
+            <div class="legend-icon donation-done-icon">✓</div>
+            <div class="legend-label">Donated</div>
+        </div>
+    </div>
+    
+    <h2 style="text-align: center; margin-top: 40px; color: #333;">All Donations</h2>
+    <div class="donations-list" id="donationsList"></div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+let map;
+
+function initMap() {
+    // Initialize map centered on India (approximate center)
+    map = L.map('map').setView([20.5937, 78.9629], 5);
+    
+    // Add OpenStreetMap tile layer (free, no API key needed)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+    }).addTo(map);
+    
+    // Fetch locations and add markers
+    fetch('/api/map_locations')
+        .then(response => response.json())
+        .then(data => {
+            // Add donor markers
+            data.donors.forEach(donor => {
+                addDonorMarker(donor);
+            });
+            
+            // Add NGO markers
+            data.ngos.forEach(ngo => {
+                addNGOMarker(ngo);
+            });
+            
+            // Add donation markers
+            data.donations.forEach(donation => {
+                addDonationMarker(donation);
+            });
+            
+            // Populate donations list
+            populateDonationsList(data.donations);
+        })
+        .catch(error => console.error('Error loading locations:', error));
+}
+
+function addDonorMarker(donor) {
+    try {
+        // For simplicity, use approximate coordinates (in production, use geocoding)
+        const lat = 20.5937 + (Math.random() - 0.5) * 5;
+        const lng = 78.9629 + (Math.random() - 0.5) * 5;
+        
+        L.circleMarker([lat, lng], {
+            radius: 10,
+            fillColor: '#4ECDC4',
+            color: 'white',
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 0.8
+        }).bindPopup(`
+            <div style="font-weight: bold; color: #4ECDC4;">📦 Donor</div>
+            <strong>${donor.name}</strong><br/>
+            📍 ${donor.address}<br/>
+            📱 ${donor.phone}
+        `).addTo(map);
+    } catch (e) {
+        console.error('Error adding donor marker:', e);
+    }
+}
+
+function addNGOMarker(ngo) {
+    try {
+        const lat = 20.5937 + (Math.random() - 0.5) * 5;
+        const lng = 78.9629 + (Math.random() - 0.5) * 5;
+        
+        L.circleMarker([lat, lng], {
+            radius: 12,
+            fillColor: '#FF6B6B',
+            color: 'white',
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 0.8
+        }).bindPopup(`
+            <div style="font-weight: bold; color: #FF6B6B;">🏢 NGO</div>
+            <strong>${ngo.name}</strong><br/>
+            📍 ${ngo.address}<br/>
+            📱 ${ngo.phone}
+        `).addTo(map);
+    } catch (e) {
+        console.error('Error adding NGO marker:', e);
+    }
+}
+
+function addDonationMarker(donation) {
+    try {
+        const lat = 20.5937 + (Math.random() - 0.5) * 3;
+        const lng = 78.9629 + (Math.random() - 0.5) * 3;
+        
+        const color = donation.status === 'Available' ? '#FFD93D' : '#6BCF7F';
+        const icon = donation.status === 'Available' ? '📋' : '✓';
+        
+        L.circleMarker([lat, lng], {
+            radius: 9,
+            fillColor: color,
+            color: 'white',
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 0.8
+        }).bindPopup(`
+            <div style="font-weight: bold; color: ${color};">🍽️ ${donation.food_name}</div>
+            Quantity: ${donation.quantity}<br/>
+            Donor: ${donation.donor_name}<br/>
+            Status: <span style="background: ${color}; padding: 2px 6px; border-radius: 4px; font-weight: bold;">${donation.status}</span><br/>
+            ${donation.ngo_name ? 'NGO: ' + donation.ngo_name + '<br/>' : ''}
+            📍 ${donation.location}
+        `).addTo(map);
+    } catch (e) {
+        console.error('Error adding donation marker:', e);
+    }
+}
+
+function populateDonationsList(donations) {
+    const list = document.getElementById('donationsList');
+    list.innerHTML = donations.map(d => `
+        <div class="donation-item ${d.status === 'Available' ? '' : 'accepted'}">
+            <h4>🍽️ ${d.food_name}</h4>
+            <p><strong>Quantity:</strong> ${d.quantity}</p>
+            <p><strong>Location:</strong> 📍 ${d.location}</p>
+            <p><strong>Donor:</strong> ${d.donor_name}</p>
+            ${d.ngo_name ? `<p><strong>Accepted by:</strong> 🏢 ${d.ngo_name}</p>` : ''}
+            <span class="status-badge status-${d.status === 'Available' ? 'available' : 'accepted'}">${d.status}</span>
+        </div>
+    `).join('');
+}
+
+// Initialize map when page loads
+window.addEventListener('load', initMap);
+</script>
+
+{% include 'footer.html' %}
+{% endblock %}

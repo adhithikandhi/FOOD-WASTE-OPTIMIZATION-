@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+<h2>Donate Food</h2>
+
+<form method="POST" action="/donor_dashboard">
+
+<input name="food" placeholder="Food Name">
+<input name="qty" placeholder="Quantity">
+<input name="prep" type="date">
+<input name="exp" type="date">
+<input name="loc" placeholder="Location">
+
+<button>Donate</button>
+
+</form>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %} 

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Food Waste</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+body {
+    font-family: Arial;
+    margin:0;
+    background: linear-gradient(135deg, #fce4ec, #e3f2fd, #e8f5e9, #fff3e0);
+    animation: fadeIn 1s ease-in;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* SIDEBAR */
+.sidebar {
+    position: fixed;
+    left: -300px; /* Reduced width */
+    top: 0;
+    width: 280px; /* Reduced width */
+    height: 100%;
+    background: linear-gradient(180deg, #ffb3ba, #bae1ff);
+    padding-top: 20px;
+    transition: left 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 0 20px rgba(255, 179, 186, 0.5);
+}
+
+.sidebar:hover {
+    box-shadow: 0 0 30px rgba(255, 179, 186, 0.7);
+}
+
+.sidebar a {
+    display: block;
+    padding: 15px;
+    color: white;
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.sidebar a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(10px);
+}
+
+.sidebar a:active {
+    background: #333;
+}
+
+/* MENU BUTTON */
+.menu-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    font-size: 25px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.menu-btn:hover {
+    transform: scale(1.1);
+}
+
+/* CENTER BOX */
+.container {
+    width: 500px;
+    margin: auto;
+    margin-top: 80px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    animation: slideUp 0.5s ease-out;
+}
+
+/* Slide up animation */
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* INPUT */
+input, select {
+    width: 90%;
+    padding: 10px;
+    margin: 10px;
+    font-size: 16px;
+    border: 2px solid #ffb3ba;
+    border-radius: 10px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus, select:focus {
+    border-color: #bae1ff;
+    box-shadow: 0 0 10px rgba(186, 225, 255, 0.5);
+    outline: none;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 18px;
+    background: linear-gradient(45deg, #ffb3ba, #bae1ff);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 179, 186, 0.5);
+}
+
+/* Error Dialog */
+.error-dialog {
+    background: #ffdddd;
+    color: #d8000c;
+    border: 1px solid #d8000c;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 2px 10px rgba(216, 0, 12, 0.3);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="menu-btn" onclick="toggle()">☰</div>
+
+<div class="sidebar" id="sidebar">
+    <a href="/">Home</a>
+    <a href="/search">Search</a>
+    <a href="/donor_dashboard">Donor</a>
+    <a href="/ngo_dashboard">NGO</a>
+    <a href="/admin_dashboard">Admin</a>
+    <a href="/delivery_partners">Delivery Partners</a>
+    <a href="/delivery_register">Delivery Register</a>
+    <a href="/logout">Logout</a>
+    
+</div>
+
+<script>
+function toggle(){
+    let bar = document.getElementById("sidebar");
+    bar.style.left = (bar.style.left=="0px") ? "-300px" : "0px";
+}
+</script>
+
+{% block content %}{% endblock %}
+
+</body>
+</html> 

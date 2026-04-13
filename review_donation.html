@@ -1,0 +1,33 @@
+<link rel="stylesheet" href="{{ url_for('static','style.css') }}">
+
+<div class="center-wrap">
+  <div class="card">
+    <h2>Available Donations</h2>
+
+    <div class="search-bar">
+      <input placeholder="🔍 Search food / location">
+      <button>🔍</button>
+    </div>
+
+    {% for d in donations %}
+      <div style="border:1px solid #ddd; padding:15px; border-radius:10px; margin-bottom:15px;
+      {% if d.status=='taken' %}background:#eee; opacity:0.6{% endif %}">
+
+        <h3>{{ d.food_name }}</h3>
+        <p>Quantity: {{ d.quantity }}</p>
+        <p>Expiry: {{ d.expiry }}</p>
+        <p>Contact: {{ d.contact }}</p>
+
+        {% if d.status!='taken' %}
+        <form method="post" action="/take/{{ d.id }}">
+          <button>Take Donation</button>
+        </form>
+        {% else %}
+          <b>Already Donated</b>
+        {% endif %}
+
+      </div>
+    {% endfor %}
+
+  </div>
+</div>

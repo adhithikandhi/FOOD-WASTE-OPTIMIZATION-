@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 style="text-align:center;">Donor Dashboard</h1>
+
+<div style="text-align: center; margin-bottom: 40px;">
+    <div class="container" style="display: inline-block; width: 50%;">
+        <h2>Add Food Donation</h2>
+        <form method="POST">
+            <input name="food_name" placeholder="Food Name" required>
+            <input name="quantity" placeholder="Quantity" required>
+
+            <label>Prepared Date</label>
+            <input type="date" name="prepared" required>
+
+            <input name="location" placeholder="Location" required>
+            <input name="phone" placeholder="Phone Number" required>
+
+            <button type="submit">Add Food</button>
+        </form>
+    </div>
+</div>
+
+<!-- 🔵 VIEW DONATIONS -->
+<h2 style="text-align:center;">My Donations</h2>
+
+<div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+    {% for f in foods %}
+    <div style="flex: 1 1 300px; border: 1px solid #cccccc; padding: 10px; border-radius: 5px;">
+        <h3>{{f.food_name}}</h3>
+
+        <p><b>Quantity:</b> {{f.quantity}}</p>
+        <p><b>Prepared:</b> {{f.prepared}}</p>
+        <p><b>Location:</b> {{f.location}}</p>
+
+        <p>
+        <b>Status:</b>
+        <span style="color:{{ 'green' if f.status=='Available' else 'red' }}">
+        {{f.status}}
+        </span>
+        </p>
+        {% if f.status == 'Donated' %}
+        <p style="color:red;">
+        <b>Donated to:</b> {{f.ngo_name}}
+        </p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}  
